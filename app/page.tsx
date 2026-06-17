@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Button from '@mui/joy/Button';
 import DashboardCard from "./components/card";
+import { getCardData } from "./config/constants";
 
 const onHandleClick = async (setAnalytics: any) => {
   const { data, error } = await supabase
@@ -23,17 +24,20 @@ const onHandleClick = async (setAnalytics: any) => {
 
 const Home = () => {
   const [analytics, setAnalytics] = useState<any>(null)
-
+  const cardData = getCardData(analytics);
   return (
     <div>
       <Button onClick={() => onHandleClick(setAnalytics)}>Fetch Data</Button>
 
       <div className="grid grid-cols-4 gap-6">
-        <DashboardCard
-          title="Revenue Recovered"
-          value={`₹${analytics?.recovered_revenue}`}
-          progress={analytics?.recovery_rate}
-        />
+        {cardData.map((card, index) => (
+          <DashboardCard
+            key={index}
+            title={card.title}
+            value={card.value}
+            progress={card.progress}
+          />
+        ))}
       </div>
     </div>
   )
