@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { supabase } from "@/lib/supabase";
 import Sidebar from "./components/SideBar";
 import Navbar from "./components/Navbar";
@@ -906,8 +906,8 @@ export default function Home() {
           <div>20:00</div>
 
           {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
-            <>
-              <div key={day} className="h-8 flex items-center justify-start text-xs font-semibold text-zinc-400">{day}</div>
+            <Fragment key={day}>
+              <div className="h-8 flex items-center justify-start text-xs font-semibold text-zinc-400">{day}</div>
               <div className="bg-cyan-500/10 border border-cyan-500/5 rounded-lg h-8 flex items-center justify-center text-cyan-300">2</div>
               <div className="bg-cyan-500/30 border border-cyan-500/10 rounded-lg h-8 flex items-center justify-center text-cyan-100">6</div>
               <div className="bg-cyan-500/40 border border-cyan-500/20 rounded-lg h-8 flex items-center justify-center text-white font-bold">11</div>
@@ -915,7 +915,7 @@ export default function Home() {
               <div className="bg-cyan-500/10 border border-cyan-500/5 rounded-lg h-8 flex items-center justify-center text-cyan-300">2</div>
               <div className="bg-cyan-500/50 border border-cyan-500/30 rounded-lg h-8 flex items-center justify-center text-white font-black animate-pulse">15</div>
               <div className="bg-cyan-500/30 border border-cyan-500/10 rounded-lg h-8 flex items-center justify-center text-cyan-100">7</div>
-            </>
+            </Fragment>
           ))}
         </div>
         
