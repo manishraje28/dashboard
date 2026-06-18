@@ -9,10 +9,10 @@ import {
   Database
 } from "lucide-react";
 
-export default function Sidebar({ activeTab, setActiveTab }) {
+export default function Sidebar({ activeTab, setActiveTab, cartsCount = 0 }) {
   const menuItems = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
-    { id: "carts", label: "Abandoned Carts", icon: ShoppingCart, count: 5 },
+    { id: "carts", label: "Abandoned Carts", icon: ShoppingCart, count: cartsCount },
     { id: "campaigns", label: "AI Campaigns", icon: Sparkles },
     { id: "analytics", label: "Advanced Analytics", icon: BarChart3 },
     { id: "settings", label: "Settings", icon: SettingsIcon },

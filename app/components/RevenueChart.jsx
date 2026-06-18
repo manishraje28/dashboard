@@ -55,7 +55,7 @@ export function RevenueTrendChart({ data }) {
     return <div className="h-80 w-full bg-zinc-950/20 border border-zinc-900 rounded-2xl animate-pulse" />;
   }
 
-  // Format data for Recharts. If no data, use mock timeline
+  // Format data for Recharts.
   const chartData = data && data.length > 0 
     ? data.map(d => {
         // Format timestamp
@@ -71,15 +71,7 @@ export function RevenueTrendChart({ data }) {
           recovered: d.recovered_carts || 0,
         };
       })
-    : [
-        { time: "09:00 AM", revenue: 1500, rate: 20 },
-        { time: "10:00 AM", revenue: 2200, rate: 25 },
-        { time: "11:00 AM", revenue: 4593, rate: 33 },
-        { time: "12:00 PM", revenue: 9397, rate: 50 },
-        { time: "01:00 PM", revenue: 9397, rate: 50 },
-        { time: "02:00 PM", revenue: 11200, rate: 55 },
-        { time: "03:00 PM", revenue: 14500, rate: 60 },
-      ];
+    : [];
 
   return (
     <div className="glass-panel p-6 rounded-2xl flex flex-col justify-between h-96">
@@ -188,9 +180,9 @@ export function ChannelPerformanceChart({ analytics }) {
 
   // Create Channel stats from analytics
   // Sent volume and recovery volume
-  const emailSent = analytics?.emails_sent || 6;
-  const whatsappSent = analytics?.whatsapp_sent || 4;
-  const callsSent = analytics?.calls_sent || 4;
+  const emailSent = analytics?.emails_sent || 0;
+  const whatsappSent = analytics?.whatsapp_sent || 0;
+  const callsSent = analytics?.calls_sent || 0;
 
   // Let's model conversion. Emails: 35%, WhatsApp: 65%, Calls: 50%
   const data = [
@@ -275,9 +267,9 @@ export function CartStatusDonutChart({ analytics }) {
     return <div className="h-80 w-full bg-zinc-950/20 border border-zinc-900 rounded-2xl animate-pulse" />;
   }
 
-  const total = analytics?.total_carts || 6;
-  const recovered = analytics?.recovered_carts || 3;
-  const pending = analytics?.pending_carts || 3;
+  const total = analytics?.total_carts || 0;
+  const recovered = analytics?.recovered_carts || 0;
+  const pending = analytics?.pending_carts || 0;
   // Lost carts: total - recovered - pending (or 0)
   const lost = Math.max(0, total - recovered - pending);
 
@@ -289,7 +281,7 @@ export function CartStatusDonutChart({ analytics }) {
 
   // If no carts yet, show a default empty distribution
   const chartData = data.length > 0 ? data : [{ name: "No data", value: 1, color: "#374151" }];
-  const recoveryRate = Math.round(analytics?.recovery_rate || 50);
+  const recoveryRate = Math.round(analytics?.recovery_rate || 0);
 
   return (
     <div className="glass-panel p-6 rounded-2xl flex flex-col justify-between h-96">

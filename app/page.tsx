@@ -33,44 +33,14 @@ import {
   Database
 } from "lucide-react";
 
-// Mock Fallback Data for full interactive experience
-const MOCK_LATEST_ANALYTICS = {
-  total_carts: 18,
-  pending_carts: 8,
-  recovered_carts: 10,
-  emails_sent: 14,
-  whatsapp_sent: 11,
-  calls_sent: 6,
-  recovered_revenue: 124950,
-  recovery_rate: 55.5,
-  date: "2026-06-18"
-};
 
-const MOCK_HISTORICAL_DATA = [
-  { created_at: "2026-06-18T09:00:00", recovered_revenue: 28000, recovery_rate: 25.0, total_carts: 4, pending_carts: 3, recovered_carts: 1, emails_sent: 2, whatsapp_sent: 1, calls_sent: 0 },
-  { created_at: "2026-06-18T10:00:00", recovered_revenue: 45000, recovery_rate: 33.3, total_carts: 6, pending_carts: 4, recovered_carts: 2, emails_sent: 4, whatsapp_sent: 2, calls_sent: 1 },
-  { created_at: "2026-06-18T11:00:00", recovered_revenue: 62000, recovery_rate: 42.8, total_carts: 7, pending_carts: 4, recovered_carts: 3, emails_sent: 6, whatsapp_sent: 3, calls_sent: 2 },
-  { created_at: "2026-06-18T12:00:00", recovered_revenue: 85500, recovery_rate: 45.4, total_carts: 11, pending_carts: 6, recovered_carts: 5, emails_sent: 8, whatsapp_sent: 5, calls_sent: 3 },
-  { created_at: "2026-06-18T13:00:00", recovered_revenue: 98000, recovery_rate: 50.0, total_carts: 12, pending_carts: 6, recovered_carts: 6, emails_sent: 9, whatsapp_sent: 7, calls_sent: 4 },
-  { created_at: "2026-06-18T14:00:00", recovered_revenue: 104500, recovery_rate: 46.1, total_carts: 13, pending_carts: 7, recovered_carts: 6, emails_sent: 11, whatsapp_sent: 8, calls_sent: 5 },
-  { created_at: "2026-06-18T15:00:00", recovered_revenue: 124950, recovery_rate: 55.5, total_carts: 18, pending_carts: 8, recovered_carts: 10, emails_sent: 14, whatsapp_sent: 11, calls_sent: 6 }
-];
-
-const MOCK_ABANDONED_CARTS = [
-  { id: "cart_101", name: "Siddharth Sharma", email: "siddharth@example.com", value: 18500, items: [{ name: "Mechanical Keyboard Pro", qty: 1, price: 12500 }, { name: "Ergonomic Office Mouse", qty: 1, price: 6000 }], date: "2026-06-18 15:12", status: "Recovered", channel: "WhatsApp", timeline: [{ time: "15:12", text: "Cart Abandoned" }, { time: "15:22", text: "Automated WhatsApp sequence sent" }, { time: "15:28", text: "Client clicked checkout link" }, { time: "15:30", text: "Order Recovered - Paid ₹18,500" }] },
-  { id: "cart_102", name: "Ananya Iyer", email: "ananya@example.com", value: 8900, items: [{ name: "Leather Sling Handbag", qty: 1, price: 8900 }], date: "2026-06-18 14:45", status: "Pending", channel: "Email", timeline: [{ time: "14:45", text: "Cart Abandoned" }, { time: "15:00", text: "Email Sequence Stage 1 sent" }] },
-  { id: "cart_103", name: "Kabir Mehta", email: "kabir@mehta.com", value: 64500, items: [{ name: "Studio Monitor Speakers (Pair)", qty: 1, price: 42000 }, { name: "USB-C Audio Interface", qty: 1, price: 22500 }], date: "2026-06-18 13:20", status: "Recovered", channel: "Call", timeline: [{ time: "13:20", text: "Cart Abandoned" }, { time: "13:35", text: "Email reminder sent" }, { time: "14:00", text: "AI Voice Call Agent completed" }, { time: "14:05", text: "Order Recovered with 10% phone discount" }] },
-  { id: "cart_104", name: "Priya Nair", email: "priya.nair@example.com", value: 4200, items: [{ name: "Aromatherapy Diffuser", qty: 1, price: 2400 }, { name: "Lavender Essential Oil", qty: 2, price: 900 }], date: "2026-06-18 12:05", status: "Pending", channel: "WhatsApp", timeline: [{ time: "12:05", text: "Cart Abandoned" }, { time: "12:15", text: "WhatsApp Reminder Sent" }, { time: "12:45", text: "WhatsApp Link Clicked" }] },
-  { id: "cart_105", name: "Rahul Verma", email: "rahul.v@domain.com", value: 29900, items: [{ name: "Noise Cancelling Headphones", qty: 1, price: 29900 }], date: "2026-06-18 10:10", status: "Lost", channel: "Email", timeline: [{ time: "10:10", text: "Cart Abandoned" }, { time: "10:25", text: "Email Sequence Stage 1 sent" }, { time: "14:25", text: "Email Sequence Stage 2 sent (10% Discount)" }, { time: "22:00", text: "Session Expired - No Purchase" }] },
-  { id: "cart_106", name: "Meera Deshmukh", email: "meera.d@example.com", value: 5500, items: [{ name: "Designer Ceramic Vase", qty: 1, price: 5500 }], date: "2026-06-18 09:30", status: "Recovered", channel: "Email", timeline: [{ time: "09:30", text: "Cart Abandoned" }, { time: "09:45", text: "Email Sequence Stage 1 sent" }, { time: "09:52", text: "Order Recovered - Paid ₹5,500" }] }
-];
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("overview");
   const [dateRange, setDateRange] = useState("today");
   const [analytics, setAnalytics] = useState<any>(null);
   const [historicalData, setHistoricalData] = useState<any[]>([]);
-  const [abandonedCarts, setAbandonedCarts] = useState<any[]>(MOCK_ABANDONED_CARTS);
+  const [abandonedCarts, setAbandonedCarts] = useState<any[]>([]);
   const [selectedCart, setSelectedCart] = useState<any>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -115,19 +85,58 @@ export default function Home() {
         .select("*")
         .order("created_at", { ascending: true });
 
+      // 3. Fetch abandoned carts dynamically
+      const { data: cartsData, error: cartsError } = await supabase
+        .from("abandoned_carts")
+        .select("*")
+        .order("created_at", { ascending: false });
+
       if (latestError || !latestData || latestData.length === 0) {
-        // Fallback to mock data if DB empty or error
-        console.warn("Using fallback mock data due to Supabase access/empty state:", latestError);
-        setAnalytics(MOCK_LATEST_ANALYTICS);
-        setHistoricalData(MOCK_HISTORICAL_DATA);
+        console.warn("Analytics data empty or error:", latestError);
+        setAnalytics(null);
+        setHistoricalData([]);
       } else {
         setAnalytics(latestData[0]);
         setHistoricalData(histData || []);
       }
+
+      if (cartsError || !cartsData || cartsData.length === 0) {
+        console.warn("Abandoned carts data empty or error:", cartsError);
+        setAbandonedCarts([]);
+      } else {
+        const mappedCarts = cartsData.map((cart: any) => {
+          const cartCreatedAt = new Date(cart.created_at || Date.now());
+          const timeString = cartCreatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const dateString = cartCreatedAt.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+          
+          const timeline = [
+            { time: timeString, text: "Cart Abandoned" }
+          ];
+          if (cart.status === "Recovered") {
+            timeline.push({ time: "System", text: "Order Recovered via Automated Sequence" });
+          } else {
+            timeline.push({ time: "System", text: "Automated campaign staging active" });
+          }
+
+          return {
+            id: cart.id.toString(),
+            name: cart.customer_name || "Unknown Customer",
+            email: cart.customer_email || "N/A",
+            value: Number(cart.cart_total) || 0,
+            items: cart.items || [],
+            date: `${dateString} ${timeString}`,
+            status: cart.status || "Pending",
+            channel: cart.status === "Recovered" ? "WhatsApp" : "Email",
+            timeline: timeline
+          };
+        });
+        setAbandonedCarts(mappedCarts);
+      }
     } catch (e) {
       console.error("Database connection error:", e);
-      setAnalytics(MOCK_LATEST_ANALYTICS);
-      setHistoricalData(MOCK_HISTORICAL_DATA);
+      setAnalytics(null);
+      setHistoricalData([]);
+      setAbandonedCarts([]);
     } finally {
       setTimeout(() => setIsRefreshing(false), 600);
     }
@@ -164,6 +173,22 @@ export default function Home() {
               recovered_revenue: prev.recovered_revenue + cart.value,
               recovery_rate: Math.round(((prev.recovered_carts + 1) / prev.total_carts) * 100)
             }));
+
+            // If it's a real cart (numeric ID or doesn't start with "cart_"), update it in Supabase
+            const isRealCart = !cartId.startsWith("cart_");
+            if (isRealCart) {
+              supabase
+                .from("abandoned_carts")
+                .update({ status: "Recovered" })
+                .eq("id", parseInt(cartId))
+                .then(({ error }) => {
+                  if (error) {
+                    console.error("Failed to update cart status in Supabase:", error);
+                  } else {
+                    console.log("Supabase cart status updated to Recovered!");
+                  }
+                });
+            }
           }
 
           const updatedCart = {
@@ -1011,7 +1036,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen bg-zinc-950 select-none text-white font-sans antialiased">
       {/* Sidebar Navigation */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} cartsCount={abandonedCarts.length} />
 
       {/* Main Container */}
       <div className="flex-1 flex flex-col min-w-0">
