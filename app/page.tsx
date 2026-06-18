@@ -118,12 +118,36 @@ export default function Home() {
             timeline.push({ time: "System", text: "Automated campaign staging active" });
           }
 
+          // Robust parsing for items column (which might be a string, json array, json object, or null)
+          let itemsArray: any[] = [];
+          if (cart.items) {
+            if (Array.isArray(cart.items)) {
+              itemsArray = cart.items;
+            } else if (typeof cart.items === "string") {
+              try {
+                const parsed = JSON.parse(cart.items);
+                if (Array.isArray(parsed)) {
+                  itemsArray = parsed;
+                } else if (typeof parsed === "object" && parsed !== null) {
+                  itemsArray = [parsed];
+                } else {
+                  itemsArray = [{ name: String(parsed), qty: 1, price: Number(cart.cart_total) || 0 }];
+                }
+              } catch (e) {
+                // Plain text fallback
+                itemsArray = [{ name: cart.items, qty: 1, price: Number(cart.cart_total) || 0 }];
+              }
+            } else if (typeof cart.items === "object") {
+              itemsArray = [cart.items];
+            }
+          }
+
           return {
             id: cart.id.toString(),
             name: cart.customer_name || "Unknown Customer",
             email: cart.customer_email || "N/A",
             value: Number(cart.cart_total) || 0,
-            items: cart.items || [],
+            items: itemsArray,
             date: `${dateString} ${timeString}`,
             status: cart.status || "Pending",
             channel: cart.status === "Recovered" ? "WhatsApp" : "Email",
@@ -499,7 +523,7 @@ export default function Home() {
                     <td className="py-4.5 px-6 font-semibold text-white font-mono text-base">₹{cart.value.toLocaleString()}</td>
                     <td className="py-4.5 px-6">
                       <span className="text-xs text-zinc-300 truncate max-w-[200px] block">
-                        {cart.items.map((it: any) => `${it.qty}x ${it.name}`).join(", ")}
+                        {cart.items.map((it: any) => typeof it === "string" ? it : `${it.qty || 1}x ${it.name || "Unknown Item"}`).join(", ")}
                       </span>
                     </td>
                     <td className="py-4.5 px-6 text-zinc-400 text-xs font-mono">{cart.date}</td>
@@ -1116,15 +1140,20 @@ export default function Home() {
               <div className="mb-6">
                 <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">Cart Contents</h4>
                 <div className="space-y-3.5 max-h-44 overflow-y-auto pr-1">
-                  {selectedCart.items.map((item: any, index: number) => (
-                    <div key={index} className="flex justify-between items-center text-xs">
-                      <div>
-                        <div className="text-zinc-200 font-semibold">{item.name}</div>
-                        <div className="text-[10px] text-zinc-500 mt-0.5">Qty: {item.qty} × ₹{item.price.toLocaleString()}</div>
+                  {selectedCart.items.map((item: any, index: number) => {
+                    const itemName = typeof item === "string" ? item : (item?.name || "Unknown Item");
+                    const itemQty = Number(item?.qty) || 1;
+                    const itemPrice = Number(item?.price) || 0;
+                    return (
+                      <div key={index} className="flex justify-between items-center text-xs">
+                        <div>
+                          <div className="text-zinc-200 font-semibold">{itemName}</div>
+                          <div className="text-[10px] text-zinc-500 mt-0.5">Qty: {itemQty} × ₹{itemPrice.toLocaleString()}</div>
+                        </div>
+                        <span className="font-semibold text-white font-mono">₹{(itemQty * itemPrice).toLocaleString()}</span>
                       </div>
-                      <span className="font-semibold text-white font-mono">₹{(item.qty * item.price).toLocaleString()}</span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
                 <div className="flex justify-between items-center mt-4 pt-4 border-t border-white/[0.04] text-sm">
                   <span className="font-bold text-zinc-300">Total Cart Value</span>
